@@ -1,8 +1,8 @@
 
 data "archive_file" "zip" {
   type = "zip"
-  source_file = "ec2_stop.py"
-  output_path = "ec2_stop.zip"
+  source_file = "${var.file1}"
+  output_path = "${var.file1}.zip"
 }
 
 
@@ -10,7 +10,7 @@ data "archive_file" "zip" {
 
 resource "aws_lambda_function" "test_lambda" {
   filename      = "${data.archive_file.zip.output_path}"
-  function_name = "ec2-stop_lambda"
+  function_name = "${var.stopfunction}"
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "ec2_stop.lambda_handler"
 
@@ -32,7 +32,7 @@ resource "aws_lambda_function" "test_lambda" {
 resource "aws_cloudwatch_event_rule" "every_min" {
   name        = "stop-instance"
   description = "stop running vm"
-  schedule_expression = "cron(7 7 ? * SAT *)"
+  schedule_expression = "${var.stopjobtime}"
 }
 
 resource "aws_cloudwatch_event_target" "checkmin" {
@@ -53,12 +53,12 @@ resource "aws_lambda_permission" "allow_cloudwatch1" {
 
 data "archive_file" "zip2" {
   type = "zip"
-  source_file = "ec2_start.py"
-  output_path = "ec2_start.zip"
+  source_file = "${var.file2}"
+  output_path = "${var.file2}.zip"
 }
 resource "aws_lambda_function" "ec2-start_lambda" {
   filename      = "${data.archive_file.zip2.output_path}"
-  function_name = "ec2-start_lambda"
+  function_name = "${var.startfunction}"
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "ec2_start.lambda_handler"
   # The filebase64sha256() function is available in Terraform 0.11.12 and later
@@ -75,9 +75,9 @@ resource "aws_lambda_function" "ec2-start_lambda" {
 
 
 resource "aws_cloudwatch_event_rule" "every_one_minute" {
-  name                = "every-one-minute"
+  name                = "start-instance"
   description         = "Fires every one minutes"
-  schedule_expression = "cron(12 7 ? * SAT *)"
+  schedule_expression = "${var.startjobtime}"
 }
 
 
