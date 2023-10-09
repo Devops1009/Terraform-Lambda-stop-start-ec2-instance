@@ -61,6 +61,8 @@ jobs:
 
     # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, or Swift).
     # If this step fails, then you should remove it and run the build manually (see below)
+    - name: Setup Java JDK
+      uses: actions/setup-java@v3.13.0        
 
     - name: install packages
       run: sudo apt-get install -y maven
