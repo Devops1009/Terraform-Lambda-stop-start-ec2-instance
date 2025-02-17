@@ -28,3 +28,8 @@ jobs:
         with:
           # Path to SARIF file relative to the root of the repository
           sarif_file: tfsec.sarif
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Run GitHub Advanced Security Scan
+        uses: github/codeql-action/analyze@v3
